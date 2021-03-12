@@ -1,17 +1,20 @@
 a {
   display: block;
-  font-size: 10vh;
+  font-size: 8vh;
   text-decoration: none;
   color: black;
   background-color: #44aa88;
   padding: 3vh 4vw;
   border-radius: 2vh;
-  transition: ease-in 0.2s;
+  transition: 0;
 }
 
 a:hover {
-  background-color: #aa4488;
-  font-size: 11vh;
+  color: #44aa88;
+  background-color: black;
+  font-size: 12vh;
+  padding: 1.1vh 2.1vw;
+  transition: ease-out 0.3s;
 }
 
 #c {

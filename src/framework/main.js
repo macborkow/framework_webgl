@@ -2,8 +2,9 @@ import * as THREE from "three";
 
 const resizeRendererToDisplaySize = (renderer) => {
   const canvas = renderer.domElement;
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
+  const pixelRatio = window.devicePixelRatio;
+  const width = canvas.clientWidth * pixelRatio | 0;
+  const height = canvas.clientHeight * pixelRatio | 0;
   const needResize = canvas.width !== width || canvas.height !== height;
   if (needResize) {
     renderer.setSize(width, height, false);
@@ -24,9 +25,10 @@ const makeInstance = (geometry, color, x, scene) => {
 
 const run = (canvas) => {
   const renderer = new THREE.WebGLRenderer({ canvas });
-  const camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
-  camera.position.z = 2;
+  const camera = new THREE.PerspectiveCamera(40, 2, 0.1, 1000);
+  camera.position.z = 120;
   const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xAAAAAA);
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const cubes = [
     makeInstance(geometry, 0x44aa88, 0, scene),
