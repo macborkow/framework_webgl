@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import webglUtils from "../utils/webgl-utils.js";
+import resizeCanvasToDisplaySize from "../utils/webgl-utils.js";
 
 const Framework = () => {
   const createShader = (gl, type, source) => {
@@ -91,7 +91,7 @@ void main() {
       stride,
       offset
     );
-    webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+    resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.CLEAR_BUFFER_BIT);
