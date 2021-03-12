@@ -11,9 +11,9 @@ const App = () => {
           <Forwarder />
         </Route>
         <Route exact path="/framework/">
-          <Link to="framework/play">play</Link>
+          <Link to="/play">play</Link>
         </Route>
-        <Route path="/framework/play">
+        <Route path={["/play", "/framework/play"]}>
           <Framework />
         </Route>
         <Route path="/:whatever">
