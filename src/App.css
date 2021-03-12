@@ -1,10 +1,11 @@
 a {
   display: block;
-  font-size: 20vh;
+  font-size: 10vh;
   text-decoration: none;
   color: black;
-  background-color: beige;
-  padding: 3vh 8vw;
+  background-color: #44aa88;
+  padding: 3vh 4vw;
+  border-radius: 2vh;
 }
 
 a:hover {
@@ -27,6 +28,7 @@ a:hover {
 
 body {
   height: 100vh;
+  margin: 0;
   background-color: black;
   color: white;
   display: flex;
