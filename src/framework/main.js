@@ -2,11 +2,50 @@ import * as THREE from "three";
 
 const run = (canvas) => {
   const renderer = new THREE.WebGLRenderer({ canvas });
+
   const camera = new THREE.PerspectiveCamera(40, 2, 0.1, 1000);
-  camera.position.z = 120;
+  camera.position.set(0, 50, 0);
+  camera.up.set(0, 0, 1);
+  camera.lookAt(0, 0, 0);
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xaaaaaa);
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+  const objects = [];
+  const sphereGeometry = new THREE.SphereGeometry(1, 6, 6);
+
+  const solarSystem = new THREE.Object3D();
+  scene.add(solarSystem);
+  objects.push(solarSystem);
+
+  const sunMaterial = new THREE.MeshPhongMaterial({ emissive: 0xffff00 });
+  const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
+  sunMesh.scale.set(5, 5, 5);
+  solarSystem.add(sunMesh);
+  objects.push(sunMesh);
+
+  const earthOrbit = new THREE.Object3D();
+  earthOrbit.position.x = 10;
+  solarSystem.add(earthOrbit);
+  objects.push(earthOrbit);
+
+  const earthMaterial = new THREE.MeshPhongMaterial({color: 0x2233FF, emissive: 0x112244});
+  const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
+  earthOrbit.add(earthMesh);
+  objects.push(earthMesh);
+
+  const moonOrbit = new THREE.Object3D();
+  moonOrbit.position.x = 2;
+  earthOrbit.add(moonOrbit);
+
+  const moonMaterial = new THREE.MeshPhongMaterial({color: 0x888888, emissive: 0x222222});
+  const moonMesh = new THREE.Mesh(sphereGeometry, moonMaterial);
+  moonMesh.scale.set(0.5,0.5,0.5);
+  moonOrbit.add(moonMesh);
+  objects.push(moonMesh);
+
+
+
+  const light = new THREE.PointLight(0xffffff, 3);
+  scene.add(light);
 
   const resizeRendererToDisplaySize = (renderer) => {
     const canvas = renderer.domElement;
@@ -20,59 +59,6 @@ const run = (canvas) => {
     return needResize;
   };
 
-  const makeInstance = (geometry, color, x) => {
-    const material = new THREE.MeshPhongMaterial({ color });
-
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-
-    cube.position.x = x;
-
-    return cube;
-  };
-
-  const objects = [];
-  const spread = 15;
-
-  const addObject = (x, y, obj) => {
-    obj.position.x = x * spread;
-    obj.position.y = y * spread;
-
-    scene.add(obj);
-    objects.push(obj);
-  };
-
-  const createMaterial = () => {
-    const material = new THREE.MeshPhongMaterial({side:THREE.DoubleSide});
-
-    const hue = Math.random();
-    const saturation = 1;
-    const luminance = 0.5;
-    material.color.setHSL(hue, saturation, luminance);
-
-    return material;
-  }
-
-  const addSolidGeometry = (x, y, geometry) => {
-    const mesh = new THREE.Mesh(geometry, createMaterial());
-    addObject(x, y, mesh);
-  }
-
-  addSolidGeometry(-2,-2, new THREE.BoxGeometry(6,6,6));
-  addSolidGeometry(-2,0, new THREE.TorusGeometry(10, 2, 4, 20, 4));
-
-  const cubes = [
-    makeInstance(geometry, 0x44aa88, 0, scene),
-    makeInstance(geometry, 0x8844aa, -2, scene),
-    makeInstance(geometry, 0xaa8844, 2, scene),
-  ];
-
-  {
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(-1, 2, 4);
-    scene.add(light);
-  }
-
   function render(time) {
     time *= 0.001;
     if (resizeRendererToDisplaySize(renderer)) {
@@ -81,12 +67,9 @@ const run = (canvas) => {
       camera.updateProjectionMatrix();
     }
 
-    cubes.forEach((cube, ndx) => {
-      const speed = 1 + ndx * 0.1;
-      const rot = time * speed;
-      cube.rotation.x = rot;
-      cube.rotation.y = rot;
-    });
+    objects.forEach((obj) => {
+      obj.rotation.y = time;
+    })
 
     renderer.render(scene, camera);
 
