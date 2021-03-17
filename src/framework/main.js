@@ -3,73 +3,74 @@ import * as THREE from "three";
 const run = (canvas) => {
   const renderer = new THREE.WebGLRenderer({ canvas });
 
-  const camera = new THREE.PerspectiveCamera(40, 2, 0.1, 1000);
-  camera.position.set(0, 50, 0);
-  camera.up.set(0, 0, 1);
-  camera.lookAt(0, 0, 0);
+  const fov = 75;
+  const aspect = 2; // the canvas default
+  const near = 0.1;
+  const far = 5;
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.z = 2;
+
   const scene = new THREE.Scene();
 
-  const objects = [];
-  const sphereGeometry = new THREE.SphereGeometry(1, 6, 6);
+  const boxWidth = 1;
+  const boxHeight = 1;
+  const boxDepth = 1;
+  const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-  const solarSystem = new THREE.Object3D();
-  scene.add(solarSystem);
-  objects.push(solarSystem);
+  const cubes = []; // just an array we can use to rotate the cubes
+  const loadManager = new THREE.LoadingManager();
+  const loader = new THREE.TextureLoader(loadManager);
+   
+  const materials = [
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-1.jpg')}),
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-2.jpg')}),
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-3.jpg')}),
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-4.jpg')}),
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-5.jpg')}),
+    new THREE.MeshBasicMaterial({map: loader.load('https://threejsfundamentals.org/threejs/resources/images/flower-6.jpg')}),
+  ];
 
-  const sunMaterial = new THREE.MeshPhongMaterial({ emissive: 0xffff00 });
-  const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
-  sunMesh.scale.set(5, 5, 5);
-  solarSystem.add(sunMesh);
-  objects.push(sunMesh);
+  const loadingElem = document.querySelector('#loading');
+  const progressBarElem = loadingElem.querySelector('.progressbar');
+   
+  loadManager.onLoad = () => {
+    loadingElem.style.display = 'none';
+    const cube = new THREE.Mesh(geometry, materials);
+    scene.add(cube);
+    cubes.push(cube);  // add to our list of cubes to rotate
+  };
 
-  const earthOrbit = new THREE.Object3D();
-  earthOrbit.position.x = 10;
-  solarSystem.add(earthOrbit);
-  objects.push(earthOrbit);
+  loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+    const progress = itemsLoaded / itemsTotal;
+    progressBarElem.style.transform = `scaleX(${progress})`;
+  };
 
-  const earthMaterial = new THREE.MeshPhongMaterial({color: 0x2233FF, emissive: 0x112244});
-  const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
-  earthOrbit.add(earthMesh);
-  objects.push(earthMesh);
-
-  const moonOrbit = new THREE.Object3D();
-  moonOrbit.position.x = 2;
-  earthOrbit.add(moonOrbit);
-
-  const moonMaterial = new THREE.MeshPhongMaterial({color: 0x888888, emissive: 0x222222});
-  const moonMesh = new THREE.Mesh(sphereGeometry, moonMaterial);
-  moonMesh.scale.set(0.5,0.5,0.5);
-  moonOrbit.add(moonMesh);
-  objects.push(moonMesh);
-
-
-
-  const light = new THREE.PointLight(0xffffff, 3);
-  scene.add(light);
-
-  const resizeRendererToDisplaySize = (renderer) => {
+  function resizeRendererToDisplaySize(renderer) {
     const canvas = renderer.domElement;
-    const pixelRatio = window.devicePixelRatio;
-    const width = (canvas.clientWidth * pixelRatio) | 0;
-    const height = (canvas.clientHeight * pixelRatio) | 0;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
     const needResize = canvas.width !== width || canvas.height !== height;
     if (needResize) {
       renderer.setSize(width, height, false);
     }
     return needResize;
-  };
+  }
 
   function render(time) {
     time *= 0.001;
+
     if (resizeRendererToDisplaySize(renderer)) {
       const canvas = renderer.domElement;
       camera.aspect = canvas.clientWidth / canvas.clientHeight;
       camera.updateProjectionMatrix();
     }
 
-    objects.forEach((obj) => {
-      obj.rotation.y = time;
-    })
+    cubes.forEach((cube, ndx) => {
+      const speed = 0.2 + ndx * 0.1;
+      const rot = time * speed;
+      cube.rotation.x = rot;
+      cube.rotation.y = rot;
+    });
 
     renderer.render(scene, camera);
 

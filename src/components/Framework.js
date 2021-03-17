@@ -7,7 +7,16 @@ const Framework = () => {
     run(canvas);
   });
 
-  return <canvas id="c"></canvas>;
+  return (
+    <main>
+      <canvas id="c"></canvas>
+      <div id="loading">
+        <div class="progress">
+          <div class="progressbar"></div>
+        </div>
+      </div>
+    </main>
+  );
 };
 
 export default Framework;
