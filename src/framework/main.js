@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const run = (canvas) => {
   const renderer = new THREE.WebGLRenderer({ canvas });
+  renderer.physicallyCorrectLights = true;
   const fov = 45;
   const aspect = 2; // the canvas default
   const near = 0.1;
@@ -70,7 +71,11 @@ const run = (canvas) => {
 
   const color = 0xFFFFFF;
   const intensity = 1;
-  const light = new THREE.AmbientLight(color, intensity);
+  const light = new THREE.PointLight(color, intensity);
+  light.power = 800;
+  light.decay = 2;
+  light.distance = Infinity;
+  light.position.set(0, 10, 0);
   scene.add(light);
 
   function resizeRendererToDisplaySize(renderer) {
