@@ -11,8 +11,8 @@ const Framework = () => {
     <main>
       <canvas id="c"></canvas>
       <div id="loading">
-        <div class="progress">
-          <div class="progressbar"></div>
+        <div className="progress">
+          <div className="progressbar"></div>
         </div>
       </div>
     </main>
