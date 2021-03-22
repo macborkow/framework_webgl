@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Framework
+
+Playing around with the idea of making a three.js game.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
